@@ -36,6 +36,8 @@ export default function Sidebar({
   initiateNewChat,
   mobileOpen,
   setMobileOpen,
+  handleLogout,
+  children,
 }) {
   const hasMounted = useHasMounted();
   const {
@@ -52,7 +54,6 @@ export default function Sidebar({
     sessionId,
   });
 
-  
   if (!hasMounted) return null;
 
   const drawerWidth = isOpen || isMobile ? 260 : 66;
@@ -279,7 +280,7 @@ export default function Sidebar({
         }}
       >
         <MenuItem
-          onClick={handleCloseAvatar}
+          onClick={handleLogout}
           sx={{
             px: 2,
             py: 1,
@@ -296,7 +297,8 @@ export default function Sidebar({
   );
 
   return (
-    <>
+    <Box sx={{ display: "flex" }}>
+      {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
         open={mobileOpen}
@@ -318,6 +320,7 @@ export default function Sidebar({
         {drawerContent}
       </Drawer>
 
+      {/* Desktop Drawer */}
       <Drawer
         variant="permanent"
         sx={{
@@ -336,6 +339,20 @@ export default function Sidebar({
       >
         {drawerContent}
       </Drawer>
-    </>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: { xs: 2, sm: 3 },
+          ml: { sm: `${drawerWidth}px` }, // Shift content right by sidebar width
+          width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
+          transition: "margin-left 0.3s ease, width 0.3s ease",
+          minHeight: "100vh",
+        }}
+      >
+        {children}
+      </Box>
+    </Box>
   );
 }

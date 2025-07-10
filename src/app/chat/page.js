@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function ChatPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const userId = user?.id ?? null;
   const sessionId = "current-session-id";
 
@@ -34,12 +34,7 @@ export default function ChatPage() {
         <Box p="4">
           {" "}
           <>
-            <Typography variant="h4" gutterBottom>
-              Welcome {user?.email}
-            </Typography>
-            <Button variant="outlined" onClick={logout}>
-              Logout
-            </Button>
+            <Typography variant="h4">Welcome {user?.email}</Typography>
           </>
         </Box>
       </Sidebar>

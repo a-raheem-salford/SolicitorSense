@@ -15,14 +15,15 @@ export function AuthProvider({ children }) {
       typeof window !== "undefined" &&
       typeof window.localStorage !== "undefined";
     if (isBrowser) {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = localStorage.getItem("user") || null;
+      console.log("storedUser", storedUser, !!storedUser);
+
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(JSON?.parse(storedUser));
       }
     }
   }, []);
 
-  // ✅ Save user to localStorage whenever it changes
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -31,20 +32,24 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  const login = (email, password) => {
-    const fakeUser = { email }; // replace with real API
-    setUser(fakeUser);
+  console.log("user", user);
+
+  const loginContext = (data) => {
+    console.log("data", data);
+
+    setUser(data);
+    localStorage.setItem("user", JSON.stringify(data));
     router.push("/chat");
   };
 
-  const logout = () => {
+  const logoutContext = () => {
     setUser(null);
     localStorage.removeItem("user");
     router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loginContext, logoutContext }}>
       {children}
     </AuthContext.Provider>
   );

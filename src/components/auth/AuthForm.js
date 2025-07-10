@@ -12,35 +12,38 @@ import {
   IconButton,
   Button,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "./useAuth";
 
 export default function AuthForm() {
-  const { login } = useAuth();
+  const { login, signup, loading, errors, handleReset } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [signupForm, setSignupForm] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const handleTabChange = (_, newValue) => setTabValue(newValue);
+  const handleTabChange = (_, newValue) => {
+    setTabValue(newValue);
+    handleReset()
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const { email, password } = loginForm;
-
-    console.log("Login:", loginForm);
-    login(email, password);
+    login(loginForm);
   };
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log("Signup:", signupForm);
+    signup(signupForm);
   };
 
   return (
@@ -73,6 +76,7 @@ export default function AuthForm() {
           SolicitorSense
         </Typography>
       </Box>
+
       <Paper
         elevation={4}
         sx={{
@@ -121,14 +125,7 @@ export default function AuthForm() {
         </Tabs>
 
         {tabValue === 0 && (
-          <Box
-            component="form"
-            onSubmit={handleLogin}
-            sx={{
-              overflow: "hidden",
-              transition: "height 0.3s ease",
-            }}
-          >
+          <Box>
             <TextField
               fullWidth
               label="Email"
@@ -137,6 +134,8 @@ export default function AuthForm() {
               onChange={(e) =>
                 setLoginForm({ ...loginForm, email: e.target.value })
               }
+              error={!!errors.email}
+              helperText={errors.email}
               required
               sx={{ mb: 2 }}
             />
@@ -148,6 +147,8 @@ export default function AuthForm() {
               onChange={(e) =>
                 setLoginForm({ ...loginForm, password: e.target.value })
               }
+              error={!!errors.password}
+              helperText={errors.password}
               required
               InputProps={{
                 endAdornment: (
@@ -163,26 +164,30 @@ export default function AuthForm() {
               }}
               sx={{ mb: 3 }}
             />
+            {errors.server && (
+              <Typography color="error" sx={{ mb: 2 }}>
+                {errors.server}
+              </Typography>
+            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ py: 1.3, fontWeight: 600, background: "#1e3c72" }}
+              disabled={loading}
+              onClick={handleLogin}
             >
-              Sign In
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </Box>
         )}
 
         {tabValue === 1 && (
-          <Box
-            component="form"
-            onSubmit={handleSignup}
-            sx={{
-              overflow: "hidden",
-              transition: "height 0.3s ease",
-            }}
-          >
+          <Box>
             <TextField
               fullWidth
               label="Full Name"
@@ -190,6 +195,8 @@ export default function AuthForm() {
               onChange={(e) =>
                 setSignupForm({ ...signupForm, name: e.target.value })
               }
+              error={!!errors.name}
+              helperText={errors.name}
               required
               sx={{ mb: 2 }}
             />
@@ -201,6 +208,8 @@ export default function AuthForm() {
               onChange={(e) =>
                 setSignupForm({ ...signupForm, email: e.target.value })
               }
+              error={!!errors.email}
+              helperText={errors.email}
               required
               sx={{ mb: 2 }}
             />
@@ -212,6 +221,36 @@ export default function AuthForm() {
               onChange={(e) =>
                 setSignupForm({ ...signupForm, password: e.target.value })
               }
+              error={!!errors.password}
+              helperText={errors.password}
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              value={signupForm.confirmPassword}
+              onChange={(e) =>
+                setSignupForm({
+                  ...signupForm,
+                  confirmPassword: e.target.value,
+                })
+              }
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
               required
               InputProps={{
                 endAdornment: (
@@ -227,13 +266,24 @@ export default function AuthForm() {
               }}
               sx={{ mb: 3 }}
             />
+            {errors.server && (
+              <Typography color="error" sx={{ mb: 2 }}>
+                {errors.server}
+              </Typography>
+            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ py: 1.3, fontWeight: 600, background: "#1e3c72" }}
+              disabled={loading}
+              onClick={handleSignup}
             >
-              Create Account
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Create Account"
+              )}
             </Button>
           </Box>
         )}

@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const useSidebar = ({ userId, sessionId }) => {
   const theme = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logoutContext } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [data, setData] = useState([]);
@@ -18,7 +18,9 @@ const useSidebar = ({ userId, sessionId }) => {
   };
   const handleCloseAvatar = () => {
     setAnchorEl(null);
-    logout();
+  };
+  const handleLogout = () => {
+    logoutContext();
   };
 
   const [isOpen, setIsOpen] = useState(() => {
@@ -85,6 +87,7 @@ const useSidebar = ({ userId, sessionId }) => {
     openAvatar,
     handleClickAvatar,
     handleCloseAvatar,
+    handleLogout,
   };
 };
 
