@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext();
 
@@ -11,30 +11,36 @@ export function AuthProvider({ children }) {
 
   // ✅ Load user from localStorage on first load
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const isBrowser =
+      typeof window !== "undefined" &&
+      typeof window.localStorage !== "undefined";
+    if (isBrowser) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
     }
   }, []);
 
   // ✅ Save user to localStorage whenever it changes
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
     } else {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
     }
   }, [user]);
 
   const login = (email, password) => {
     const fakeUser = { email }; // replace with real API
     setUser(fakeUser);
-    router.push('/chat');
+    router.push("/chat");
   };
 
   const logout = () => {
     setUser(null);
-    router.push('/login');
+    localStorage.removeItem("user");
+    router.push("/login");
   };
 
   return (

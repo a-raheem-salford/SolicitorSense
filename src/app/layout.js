@@ -1,53 +1,57 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "../context/AuthContext";
-import Sidebar from "../components/sidebar";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
+import useHasMounted from "@/hooks/useHasMounted";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "../lib/theme";
+import { Poppins } from "next/font/google";
 import "./globals.css";
-import { useEffect } from "react";
 
 const PUBLIC_ROUTES = ["/login", "/signup"];
 
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700"], // choose weights you need
+  subsets: ["latin"],
+});
+
 function AppLayout({ children }) {
+  const hasMounted = useHasMounted();
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+
+  const [redirecting, setRedirecting] = useState(true);
   const isPublic = PUBLIC_ROUTES.includes(pathname);
+  const isPrivate = !isPublic;
 
   useEffect(() => {
-    if (!user && !isPublic) {
-      router.replace("/login"); // block unauthenticated
+    if (!hasMounted) return;
+
+    if (!user && isPrivate) {
+      router.replace("/login");
+    } else if (user && isPublic) {
+      router.replace("/chat");
+    } else {
+      setRedirecting(false);
     }
+  }, [hasMounted, pathname, user]);
 
-    if (user && isPublic) {
-      router.replace("/chat"); // block logged-in access to login/signup
-    }
-  }, [pathname, user]);
+  if (!hasMounted || redirecting) return null;
 
-  const showSidebar = user && !isPublic;
-
-  return (
-    <Box sx={{ display: "flex" }}>
-      {showSidebar && <Sidebar />}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {children}
-      </Box>
-    </Box>
-  );
+  return <div style={{ height: "100vh" }}>{children}</div>;
 }
 
 export default function RootLayout({ children }) {
+  const hasMounted = useHasMounted();
   return (
     <html lang="en">
-      <body>
+      <body suppressHydrationWarning={true} className={poppins.className}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AuthProvider>
-            <AppLayout>{children}</AppLayout>
+            {hasMounted ? <AppLayout>{children}</AppLayout> : null}
           </AuthProvider>
         </ThemeProvider>
       </body>
