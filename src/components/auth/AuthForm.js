@@ -1,158 +1,287 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
+  Paper,
   Typography,
-  TextField,
-  Button,
   Tabs,
   Tab,
-  Divider,
-  Paper,
+  TextField,
   InputAdornment,
-  IconButton
-} from '@mui/material';
-import { Visibility, VisibilityOff, Google } from '@mui/icons-material';
+  IconButton,
+  Button,
+  Divider,
+} from "@mui/material";
+import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
+import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AuthForm() {
+  const { login } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '' });
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [signupForm, setSignupForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const handleTabChange = (_, newValue) => setTabValue(newValue);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log('Login:', loginForm);
+    const { email, password } = loginForm;
+
+    console.log("Login:", loginForm);
+    login(email, password);
   };
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log('Signup:', signupForm);
+    console.log("Signup:", signupForm);
   };
 
   return (
     <Box
       sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        p: 4
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        p: 2,
       }}
     >
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h3">{tabValue === 0 ? 'Welcome Back' : 'Get Started'}</Typography>
-        <Typography variant="body1">
-          {tabValue === 0 ? 'Access your legal AI assistant' : 'Create your account'}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <Image src={"/logo.png"} alt="logo" width={30} height={30} />
+        <Typography
+          variant="h4"
+          color="#1e3c72"
+          fontWeight={"bold"}
+          fontSize={"1.5rem"}
+          marginTop={"4px"}
+          ml={1}
+        >
+          SolicitorSense
         </Typography>
       </Box>
+      <Paper
+        elevation={4}
+        sx={{
+          width: "100%",
+          maxWidth: 560,
+          minHeight: 660,
+          p: 4,
+          borderRadius: 3,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+        }}
+      >
+        <Box sx={{ textAlign: "center", mb: 3 }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 600, mb: 1, color: "#1e3c72" }}
+          >
+            {tabValue === 0 ? "Welcome Back" : "Create Account"}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            {tabValue === 0
+              ? "Access your AI solicitor anytime"
+              : "Sign up to start your legal journey"}
+          </Typography>
+        </Box>
 
-      <Paper elevation={0} sx={{ backgroundColor: '#f8f9fa', borderRadius: 2, p: 0.5, mb: 3 }}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
           variant="fullWidth"
           sx={{
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 500 },
-            '& .MuiTabs-indicator': { display: 'none' }
+            mb: 3,
+            "& .MuiTab-root": {
+              textTransform: "none",
+              fontWeight: 600,
+              borderRadius: 2,
+              "&.Mui-selected": {
+                bgcolor: "#1e3c72",
+                color: "white",
+              },
+            },
+            "& .MuiTabs-indicator": { display: "none" },
           }}
         >
-          <Tab label="Login" />
-          <Tab label="Sign Up" />
+          <Tab label="Login" sx={{ color: "#1e3c72" }} />
+          <Tab label="Sign Up" sx={{ color: "#1e3c72" }} />
         </Tabs>
-      </Paper>
 
-      {tabValue === 0 && (
-        <Box component="form" onSubmit={handleLogin}>
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            value={loginForm.email}
-            onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            value={loginForm.password}
-            onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-            required
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
+        {tabValue === 0 && (
+          <Box
+            component="form"
+            onSubmit={handleLogin}
+            sx={{
+              overflow: "hidden",
+              transition: "height 0.3s ease",
             }}
-            sx={{ mb: 3 }}
-          />
-          <Button type="submit" fullWidth variant="contained">Sign In</Button>
-        </Box>
-      )}
+          >
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={loginForm.email}
+              onChange={(e) =>
+                setLoginForm({ ...loginForm, email: e.target.value })
+              }
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              value={loginForm.password}
+              onChange={(e) =>
+                setLoginForm({ ...loginForm, password: e.target.value })
+              }
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 3 }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ py: 1.3, fontWeight: 600, background: "#1e3c72" }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        )}
 
-      {tabValue === 1 && (
-        <Box component="form" onSubmit={handleSignup}>
-          <TextField
-            fullWidth
-            label="Full Name"
-            value={signupForm.name}
-            onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            value={signupForm.email}
-            onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            value={signupForm.password}
-            onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-            required
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
+        {tabValue === 1 && (
+          <Box
+            component="form"
+            onSubmit={handleSignup}
+            sx={{
+              overflow: "hidden",
+              transition: "height 0.3s ease",
             }}
-            sx={{ mb: 3 }}
-          />
-          <Button type="submit" fullWidth variant="contained">Create Account</Button>
-        </Box>
-      )}
+          >
+            <TextField
+              fullWidth
+              label="Full Name"
+              value={signupForm.name}
+              onChange={(e) =>
+                setSignupForm({ ...signupForm, name: e.target.value })
+              }
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={signupForm.email}
+              onChange={(e) =>
+                setSignupForm({ ...signupForm, email: e.target.value })
+              }
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              value={signupForm.password}
+              onChange={(e) =>
+                setSignupForm({ ...signupForm, password: e.target.value })
+              }
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 3 }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ py: 1.3, fontWeight: 600, background: "#1e3c72" }}
+            >
+              Create Account
+            </Button>
+          </Box>
+        )}
 
-      <Box sx={{ position: 'relative', my: 3 }}>
-        <Divider />
-        <Typography variant="body2" sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', px: 2 }}>
-          or
+        <Box sx={{ position: "relative", my: 3 }}>
+          <Divider />
+          <Typography
+            variant="body2"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              px: 1.5,
+              backgroundColor: "background.paper",
+              color: "text.secondary",
+            }}
+          >
+            or
+          </Typography>
+        </Box>
+
+        <Button
+          fullWidth
+          variant="outlined"
+          startIcon={<Google />}
+          sx={{ py: 1.3, fontWeight: 500 }}
+        >
+          Continue with Google
+        </Button>
+
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 3,
+            textAlign: "center",
+            color: "text.secondary",
+            "& a": {
+              color: "primary.main",
+              textDecoration: "none",
+              fontWeight: 500,
+            },
+          }}
+        >
+          By continuing, you agree to our <a href="#">Terms of Service</a> and{" "}
+          <a href="#">Privacy Policy</a>.
         </Typography>
-      </Box>
-
-      <Button fullWidth variant="outlined" startIcon={<Google />} sx={{ mb: 3 }}>
-        Continue with Google
-      </Button>
-
-      <Typography variant="body2" sx={{ textAlign: 'center' }}>
-        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-      </Typography>
+      </Paper>
     </Box>
   );
 }

@@ -236,11 +236,19 @@ export default function ChatPreviewSidebar() {
                   sx={{
                     width: 32,
                     height: 32,
-                    backgroundColor:
-                      msg.type === "user" ? "#1e3c72" : "#2a5298",
+                    backgroundColor: msg.type === "user" ? "#1e3c72" : "white",
                   }}
                 >
-                  {msg.type === "user" ? "U" : "SS"}
+                  {msg.type === "user" ? (
+                    "U"
+                  ) : (
+                    <Image
+                      src={"/small_logo.png"}
+                      alt="logo"
+                      width={24}
+                      height={24}
+                    />
+                  )}
                 </Avatar>
                 <Box
                   sx={{
@@ -261,9 +269,14 @@ export default function ChatPreviewSidebar() {
             <Fade in>
               <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
                 <Avatar
-                  sx={{ width: 32, height: 32, backgroundColor: "#2a5298" }}
+                  sx={{ width: 32, height: 32, backgroundColor: "white" }}
                 >
-                  SS
+                  <Image
+                    src={"/small_logo.png"}
+                    alt="logo"
+                    width={24}
+                    height={24}
+                  />
                 </Avatar>
                 <TypingIndicator />
               </Box>

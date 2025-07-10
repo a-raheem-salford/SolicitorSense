@@ -52,10 +52,12 @@ export default function LoginPage() {
           xs={12}
           md={6}
           sx={{
+            background: { xs: "#f5f4ed", md: "transparent" },
             height: "100vh",
             borderLeft: { md: "1px solid #e9ecef" },
-            maxWidth: "50vw",
-            minWidth: "50vw",
+            width: { xs: "100vw", md: "50vw" },
+            maxWidth: { xs: "100vw", md: "50vw" },
+            minWidth: { xs: "100vw", md: "50vw" },
           }}
         >
           <AuthForm />
