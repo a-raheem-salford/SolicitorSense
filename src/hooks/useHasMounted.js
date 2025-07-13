@@ -1,6 +1,5 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+// hooks/useHasMounted.js
+import { useState, useEffect } from "react";
 
 export default function useHasMounted() {
   const [hasMounted, setHasMounted] = useState(false);

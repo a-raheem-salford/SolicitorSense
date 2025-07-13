@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import Sidebar from "@/components/sidebar/sidebar";
 import TopBar from "@/components/topbar/topbar";
 import { useState } from "react";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export default function ChatPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -20,8 +21,7 @@ export default function ChatPage() {
   };
 
   return (
-    <>
-      {" "}
+    <ProtectedRoute>
       <TopBar onMenuClick={() => setMobileOpen(true)} />{" "}
       <Sidebar
         userId={userId}
@@ -38,6 +38,6 @@ export default function ChatPage() {
           </>
         </Box>
       </Sidebar>
-    </>
+    </ProtectedRoute>
   );
 }

@@ -20,11 +20,11 @@ const useSidebar = ({ userId, sessionId }) => {
     setAnchorEl(null);
   };
   const handleLogout = () => {
+    console.log("clicked")
     logoutContext();
   };
 
   const [isOpen, setIsOpen] = useState(() => {
-    // On first render, get from localStorage or decide based on screen size
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("sidebarOpen");
       return stored !== null ? stored === "true" : window.innerWidth >= 768;
@@ -62,7 +62,6 @@ const useSidebar = ({ userId, sessionId }) => {
   //   }, [userId, sessionId]);
 
   useEffect(() => {
-    // Optional: Adjust open state based on media query
     if (typeof window !== "undefined") {
       const autoCollapse = () => {
         if (window.innerWidth < 768) {

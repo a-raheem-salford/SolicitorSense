@@ -36,7 +36,7 @@ export default function Sidebar({
   initiateNewChat,
   mobileOpen,
   setMobileOpen,
-  handleLogout,
+
   children,
 }) {
   const hasMounted = useHasMounted();
@@ -49,6 +49,7 @@ export default function Sidebar({
     openAvatar,
     handleClickAvatar,
     handleCloseAvatar,
+    handleLogout,
   } = useSidebar({
     userId,
     sessionId,
@@ -280,7 +281,10 @@ export default function Sidebar({
         }}
       >
         <MenuItem
-          onClick={handleLogout}
+          onClick={() => {
+            console.log("clicked");
+            handleLogout();
+          }}
           sx={{
             px: 2,
             py: 1,

@@ -1,24 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import useHasMounted from "@/hooks/useHasMounted";
 
-export default function Home() {
+export default function ProtectedRoute({ children }) {
   const { user } = useAuth();
   const router = useRouter();
   const hasMounted = useHasMounted();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     if (!hasMounted) return;
 
-    if (user) {
-      router.replace("/chat");
-    } else {
+    if (!user) {
       router.replace("/login");
+    } else {
+      setChecking(false); // Done checking
     }
   }, [hasMounted, user]);
 
-  return null;
+  if (!hasMounted || checking) return null;
+
+  return children;
 }
