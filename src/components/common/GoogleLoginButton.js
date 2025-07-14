@@ -12,8 +12,6 @@ const GoogleAuth = () => {
       <GoogleOAuthProvider clientId={clientId}>
         <GoogleLogin
           onSuccess={async (credentialResponse) => {
-            console.log({ credentialResponse });
-
             try {
               const res = await HTTP_REQUEST.post(
                 "/api/auth/google-auth",

@@ -23,14 +23,13 @@ import {
   Add,
   ChatBubbleOutline,
   KeyboardArrowDown,
-  KeyboardTab,
   Logout,
 } from "@mui/icons-material";
 import useHasMounted from "@/hooks/useHasMounted";
 import useSidebar from "./useSidebar";
+import { getInitials } from "@/lib/helper";
 
 export default function Sidebar({
-  userId,
   sessionId,
   fetchDataForSession,
   initiateNewChat,
@@ -50,14 +49,14 @@ export default function Sidebar({
     handleClickAvatar,
     handleCloseAvatar,
     handleLogout,
+    user,
   } = useSidebar({
-    userId,
     sessionId,
   });
 
   if (!hasMounted) return null;
 
-  const drawerWidth = isOpen || isMobile ? 260 : 66;
+  const drawerWidth = isOpen || isMobile ? 280 : 66;
 
   const drawerContent = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -107,7 +106,12 @@ export default function Sidebar({
               },
             }}
           >
-            <KeyboardTab sx={{ transform: "scaleX(-1)", color: "#1e3c72" }} />
+            <Image
+              src={"/sidebar_left.png"}
+              alt="logo"
+              width={25}
+              height={25}
+            />
           </IconButton>
         )}
       </Box>
@@ -135,7 +139,12 @@ export default function Sidebar({
                 },
               }}
             >
-              <KeyboardTab sx={{ color: "#1e3c72" }} />
+              <Image
+                src={"/sidebar_right.png"}
+                alt="logo"
+                width={25}
+                height={25}
+              />
             </IconButton>
           </Tooltip>
         )}
@@ -178,7 +187,7 @@ export default function Sidebar({
       </>
 
       <Box sx={{ flexGrow: 1, overflowY: "auto", px: isOpen ? 1 : 0 }}>
-        {data.length >= 0 && (isOpen || isMobile) && (
+        {data.length > 0 && (isOpen || isMobile) && (
           <Typography
             variant="subtitle2"
             sx={{ px: 2, mb: 1, color: "text.secondary" }}
@@ -253,13 +262,24 @@ export default function Sidebar({
             }}
           >
             <Typography variant="h8" fontSize={14}>
-              Y
+              {getInitials(user?.name)}
             </Typography>
           </Avatar>
           {isOpen && (
-            <Typography variant="body2" fontWeight={"bold"}>
-              You
-            </Typography>
+            <Tooltip title={user?.name} arrow>
+              <Typography
+                variant="body1"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "160px",
+                  cursor: "pointer",
+                }}
+              >
+                {user?.name?.split(" ")[0]}
+              </Typography>
+            </Tooltip>
           )}
         </Box>
         {isOpen && <KeyboardArrowDown sx={{ color: "#1e3c72" }} />}

@@ -6,7 +6,6 @@ export default function Toaster({ toast, setToast }) {
   const handleClose = () => {
     setToast({ ...toast, open: false });
   };
-  console.log("toast", toast);
 
   return (
     <Snackbar

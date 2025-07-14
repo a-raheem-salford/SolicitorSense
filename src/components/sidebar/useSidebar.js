@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useAuth } from "@/context/AuthContext";
 
-const useSidebar = ({ userId, sessionId }) => {
+const useSidebar = ({ sessionId }) => {
   const theme = useTheme();
   const { user, logoutContext } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -20,7 +20,6 @@ const useSidebar = ({ userId, sessionId }) => {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    console.log("clicked")
     logoutContext();
   };
 
@@ -87,7 +86,9 @@ const useSidebar = ({ userId, sessionId }) => {
     handleClickAvatar,
     handleCloseAvatar,
     handleLogout,
+    user
   };
+
 };
 
 export default useSidebar;

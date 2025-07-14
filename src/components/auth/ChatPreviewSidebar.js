@@ -4,44 +4,9 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Avatar, Paper, Fade, Slide } from "@mui/material";
 import { keyframes } from "@mui/system";
 import Image from "next/image";
+import { TypingIndicator } from "@/lib/helper";
 
-const bounce = keyframes`
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
-`;
 
-function TypingIndicator() {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 0.5,
-        p: 1.5,
-        backgroundColor: "#fff",
-        borderRadius: 3,
-        maxWidth: "70%",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-      }}
-    >
-      <Box sx={{ display: "flex", gap: 0.5 }}>
-        {[0, 1, 2].map((i) => (
-          <Box
-            key={i}
-            sx={{
-              width: 6,
-              height: 6,
-              backgroundColor: "#2a5298",
-              borderRadius: "50%",
-              animation: `${bounce} 1.4s infinite`,
-              animationDelay: `${i * 0.2}s`,
-            }}
-          />
-        ))}
-      </Box>
-    </Box>
-  );
-}
 
 export default function ChatPreviewSidebar() {
   const [messages, setMessages] = useState([]);
@@ -237,10 +202,11 @@ export default function ChatPreviewSidebar() {
                     width: 32,
                     height: 32,
                     backgroundColor: msg.type === "user" ? "#1e3c72" : "white",
+                    color:"white"
                   }}
                 >
                   {msg.type === "user" ? (
-                    "U"
+                    "Y"
                   ) : (
                     <Image
                       src={"/small_logo.png"}
