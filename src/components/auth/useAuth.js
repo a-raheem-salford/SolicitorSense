@@ -3,12 +3,27 @@
 import { useState } from "react";
 import Joi from "joi";
 import HTTP_REQUEST from "@/lib/axiosConfig";
-import { useAuth as useAuthContext } from "@/context/AuthContext"; // ✅ import AuthContext
+import { useAuth as useAuthContext } from "@/context/AuthContext";
 
 export function useAuth() {
   const { loginContext } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState({
+    open: false,
+    severity: "success",
+    message: "",
+  });
+  const [tabValue, setTabValue] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [signupForm, setSignupForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const signupSchema = Joi.object({
     name: Joi.string().min(3).required().messages({
@@ -39,6 +54,10 @@ export function useAuth() {
     }),
   });
 
+  const handleTabChange = (_, newValue) => {
+    setTabValue(newValue);
+    handleReset();
+  };
   const login = async (form) => {
     const { error } = loginSchema.validate(form, { abortEarly: false });
     if (error) {
@@ -55,6 +74,7 @@ export function useAuth() {
     } catch (err) {
       console.log(err);
       setErrors({ server: err.response?.data?.error || "Login failed" });
+      setToast({ open: true, message: "Login failed", severity: "error" });
     } finally {
       setLoading(false);
     }
@@ -76,8 +96,8 @@ export function useAuth() {
         password: form.password,
       });
       loginContext(res.data.user);
-      console.log("Signup Success", res.data);
     } catch (err) {
+      setToast({ open: true, message: "Signup failed", severity: "error" });
       console.log(err);
       setErrors({ server: err.response?.data?.error || "Signup failed" });
     } finally {
@@ -96,5 +116,35 @@ export function useAuth() {
     setErrors({});
   };
 
-  return { login, signup, loading, errors, handleReset };
+  const handleLogin = (e) => {
+    e.preventDefault();
+    login(loginForm);
+  };
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    signup(signupForm);
+  };
+
+  return {
+    login,
+    signup,
+    loading,
+    errors,
+    handleReset,
+    tabValue,
+    setTabValue,
+    showPassword,
+    setShowPassword,
+    loginForm,
+    setLoginForm,
+    signupForm,
+    setSignupForm,
+    handleTabChange,
+    toast,
+    setToast,
+    loginContext,
+    handleLogin,
+    handleSignup,
+  };
 }

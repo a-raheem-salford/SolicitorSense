@@ -17,34 +17,26 @@ import {
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 import Image from "next/image";
 import { useAuth } from "./useAuth";
+import Toaster from "../common/toast";
+import GoogleLoginButton from "../common/GoogleLoginButton";
 
 export default function AuthForm() {
-  const { login, signup, loading, errors, handleReset } = useAuth();
-  const [tabValue, setTabValue] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
-  const [signupForm, setSignupForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const handleTabChange = (_, newValue) => {
-    setTabValue(newValue);
-    handleReset()
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    login(loginForm);
-  };
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-    signup(signupForm);
-  };
+  const {
+    handleLogin,
+    handleSignup,
+    loading,
+    errors,
+    tabValue,
+    showPassword,
+    setShowPassword,
+    loginForm,
+    setLoginForm,
+    signupForm,
+    setSignupForm,
+    handleTabChange,
+    toast,
+    setToast,
+  } = useAuth();
 
   return (
     <Box
@@ -306,14 +298,7 @@ export default function AuthForm() {
           </Typography>
         </Box>
 
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<Google />}
-          sx={{ py: 1.3, fontWeight: 500 }}
-        >
-          Continue with Google
-        </Button>
+        <GoogleLoginButton />
 
         <Typography
           variant="body2"
@@ -332,6 +317,8 @@ export default function AuthForm() {
           <a href="#">Privacy Policy</a>.
         </Typography>
       </Paper>
+
+      <Toaster toast={toast} setToast={setToast} />
     </Box>
   );
 }
