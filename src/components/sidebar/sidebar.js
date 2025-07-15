@@ -35,7 +35,6 @@ export default function Sidebar({
   initiateNewChat,
   mobileOpen,
   setMobileOpen,
-
   children,
 }) {
   const hasMounted = useHasMounted();

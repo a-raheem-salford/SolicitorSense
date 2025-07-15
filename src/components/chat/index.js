@@ -77,11 +77,11 @@ export default function ChatContent() {
           >
             {loadingList ? (
               <>
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3, 4].map((i) => (
                   <Skeleton
                     key={i}
                     variant="rounded"
-                    height={60}
+                    height={i % 2 ? 60 : 200}
                     sx={{ mb: 2 }}
                   />
                 ))}

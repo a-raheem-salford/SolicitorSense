@@ -53,7 +53,9 @@ export function AuthProvider({ children }) {
 
   const logoutContext = () => {
     setUser(null);
+    setSessionID(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("sessionId");
     router.push("/login");
   };
 
