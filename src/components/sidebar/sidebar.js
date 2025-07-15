@@ -11,20 +11,15 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Button,
   Avatar,
   Menu,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
 import Image from "next/image";
-import {
-  Add,
-  ChatBubbleOutline,
-  KeyboardArrowDown,
-  Logout,
-} from "@mui/icons-material";
+import { Add, KeyboardArrowDown, Logout } from "@mui/icons-material";
 import useHasMounted from "@/hooks/useHasMounted";
 import useSidebar from "./useSidebar";
 import { getInitials } from "@/lib/helper";
@@ -42,6 +37,7 @@ export default function Sidebar({
     isOpen,
     toggleSidebar,
     isMobile,
+    loading,
     data = [],
     anchorEl,
     openAvatar,
@@ -195,35 +191,76 @@ export default function Sidebar({
           </Typography>
         )}
         <List>
-          {data.map((chat) => {
-            const isActive = sessionId === chat.sessionId;
-            const item = (
-              <ListItemButton
-                selected={isActive}
-                onClick={() => fetchDataForSession(chat.sessionId)}
-                sx={{
-                  justifyContent: isOpen ? "flex-start" : "center",
-                  px: isOpen ? 2 : 1,
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 0, mr: isOpen ? 2 : 0 }}>
-                  <ChatBubbleOutline />
-                </ListItemIcon>
-                {isOpen && (
-                  <ListItemText
-                    primary={chat.msg}
-                    primaryTypographyProps={{ noWrap: true, fontSize: 14 }}
-                  />
-                )}
-              </ListItemButton>
-            );
+          {loading ? (
+            <>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+                <Skeleton
+                  key={i}
+                  variant="rounded"
+                  height={35}
+                  sx={{ mb: 1 }}
+                />
+              ))}
+            </>
+          ) : (
+            data.map((chat) => {
+              const isActive = sessionId === chat.sessionId;
 
-            return (
-              <ListItem key={chat.sessionId} disablePadding>
-                {isOpen ? item : <Tooltip title={chat.msg}>{item}</Tooltip>}
-              </ListItem>
-            );
-          })}
+              const item = (
+                <ListItemButton
+                  selected={isActive}
+                  onClick={() => fetchDataForSession(chat.sessionId)}
+                  sx={{
+                    justifyContent: isOpen ? "flex-start" : "center",
+                    px: isOpen ? 2 : 1,
+                    mb: 1,
+                    // Normal state styles
+                    borderRadius: "8px",
+                    transition:
+                      "background-color 0.2s ease, transform 0.1s ease",
+
+                    // Hover state
+                    "&:hover": {
+                      backgroundColor: "#f0f4ff", // Light blue background on hover
+                      transform: "translateY(-1px)",
+                      boxShadow: "0 2px 6px rgba(30, 60, 114, 0.1)",
+                    },
+
+                    // Active state (when selected)
+                    "&.Mui-selected": {
+                      backgroundColor: "#1e3c72", // Dark blue background
+                      color: "white",
+                      fontWeight: 600,
+                    },
+
+                    // Hover state when already selected
+                    "&.Mui-selected:hover": {
+                      backgroundColor: "#0d2a5c", // Slightly darker blue
+                      boxShadow: "0 2px 8px rgba(13, 42, 92, 0.2)",
+                    },
+                  }}
+                >
+                  {isOpen && (
+                    <ListItemText
+                      primary={chat.msg}
+                      primaryTypographyProps={{
+                        noWrap: true,
+                        fontSize: 14,
+                        // Text color adjustment for selected state
+                        color: isActive ? "inherit" : "text.primary",
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+              );
+
+              return (
+                <ListItem key={chat.sessionId} disablePadding>
+                  {isOpen && item}
+                </ListItem>
+              );
+            })
+          )}
         </List>
       </Box>
 
@@ -289,12 +326,15 @@ export default function Sidebar({
         open={openAvatar}
         onClose={handleCloseAvatar}
         slotProps={{
-          list: {
-            "aria-labelledby": "basic-button",
-          },
           paper: {
             sx: {
               minWidth: 180,
+              borderRadius: "8px",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
+              border: "1px solid",
+              borderColor: "divider",
+              py: 0.5,
+              overflow: "hidden",
             },
           },
         }}
@@ -305,11 +345,36 @@ export default function Sidebar({
             handleLogout();
           }}
           sx={{
-            px: 2,
-            py: 1,
+            px: 3,
+            py: 1.5,
+            minWidth: 200,
+            width: "100%",
+            minHeight: 48,
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            gap: 2,
+            fontSize: 14,
+            color: "text.primary",
+            transition: "all 0.2s ease",
+
+            "&:hover": {
+              backgroundColor: "#f0f4ff",
+              color: "#1e3c72",
+            },
+
+            "&:focus": {
+              backgroundColor: "#e6edff",
+            },
+
+            "&:active": {
+              backgroundColor: "#dbeafe",
+              transform: "scale(0.98)",
+            },
+
+            "& svg": {
+              color: "inherit",
+              fontSize: 18,
+            },
           }}
         >
           <Logout fontSize="small" />

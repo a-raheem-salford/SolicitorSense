@@ -151,6 +151,7 @@ const useChat = () => {
     reload,
     handleReloadChat,
     setMsg,
+    sessionId
   };
 };
 
