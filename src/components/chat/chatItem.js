@@ -5,11 +5,7 @@ import Image from "next/image";
 
 const ChatItem = ({ user, msg, name = "" }) => {
   const isAI = user === "AI";
-  const displayName = isAI ? (
-    <Image src={"/small_logo.png"} alt="logo" width={24} height={24} />
-  ) : (
-    "You"
-  );
+  const displayName = "You";
   const initials = displayName
     .split(" ")
     .map((n) => n[0])
@@ -20,11 +16,11 @@ const ChatItem = ({ user, msg, name = "" }) => {
       sx={{
         width: "100%",
         display: "flex",
-        justifyContent: isAI ? "flex-start" : "flex-end",
+        justifyContent: "flex-end",
         alignItems: "flex-start",
         mb: 2,
         gap: 2,
-        flexDirection: isAI ? "row" : "row-reverse",
+        flexDirection: "row-reverse",
         background: isAI ? "transparent" : "#f0eee6",
         padding: "12px 20px",
         borderRadius: "10px",
@@ -49,36 +45,58 @@ const ChatItem = ({ user, msg, name = "" }) => {
           minWidth: "215px",
         }}
       >
-        <Typography
-          variant="subtitle2"
-          fontWeight={700}
-          sx={{ color: "#1e3c72" }}
-        >
-          {displayName}
-        </Typography>
+        {!isAI && (
+          <Typography
+            variant="subtitle2"
+            fontWeight={700}
+            sx={{ color: "#1e3c72" }}
+          >
+            {displayName}
+          </Typography>
+        )}
         <Box
           sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
             wordBreak: "break-word",
             marginTop: 1.5,
+            gap:2,
             "& p": { margin: 0, padding: 0 },
           }}
         >
+          {isAI && (
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: "#1e3c72",
+                fontSize: 14,
+                fontWeight: "bold",
+                color: "#ffffff",
+              }}
+            >
+              <Image src={"/chat_icon.png"} alt="logo" width={24} height={24} />
+            </Avatar>
+          )}
           <Markdown>{msg}</Markdown>
         </Box>
       </Box>
 
-      <Avatar
-        sx={{
-          width: 32,
-          height: 32,
-          bgcolor: "#1e3c72",
-          fontSize: 14,
-          fontWeight: "bold",
-          color: "#ffffff",
-        }}
-      >
-        {initials}
-      </Avatar>
+      {!isAI && (
+        <Avatar
+          sx={{
+            width: 32,
+            height: 32,
+            bgcolor: isAI ? "#ffffff" : "#1e3c72",
+            fontSize: 14,
+            fontWeight: "bold",
+            color: "#ffffff",
+          }}
+        >
+          {initials}
+        </Avatar>
+      )}
     </Box>
   );
 };

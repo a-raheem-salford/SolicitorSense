@@ -26,7 +26,7 @@ const useChat = () => {
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      onMsgSend();
+      msg.trim() && onMsgSend();
     }
   };
 
@@ -84,7 +84,7 @@ const useChat = () => {
         if (axios.isAxiosError(error) && error.response) {
           setToast({
             open: true,
-            message: error.response.data.message || error.message,
+            message: error.response.data.error || error.message,
             severity: "error",
           });
         } else {
@@ -103,10 +103,12 @@ const useChat = () => {
       const response = await HTTP_REQUEST.get(`/chat?&sessionId=${Id}`);
       setChat(response?.data);
     } catch (error) {
+      console.log("error", error);
+
       if (axios.isAxiosError(error) && error.response) {
         setToast({
           open: true,
-          message: error.response.data.message || error.message,
+          message: error.response.data.error || error.message,
           severity: "error",
         });
       } else {

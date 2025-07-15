@@ -8,7 +8,6 @@ import {
   Skeleton,
   Avatar,
   CircularProgress,
-  Typography,
   Button,
 } from "@mui/material";
 import { AttachFile, Send } from "@mui/icons-material";
@@ -53,29 +52,27 @@ export default function ChatContent() {
           flexDirection: "column",
           height: "100%",
           minHeight: 0,
-          marginRight: "4rem",
         }}
       >
         {/* Chat Body */}
         <Box
           sx={{
-            overflow: "auto",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flex: 1,
             minHeight: 0,
+            overflowY: "auto",
             alignItems: chat?.length > 0 ? "baseline" : "center",
           }}
         >
           <Box
             sx={{
               width: "100%",
-              maxHeight: "calc(100vh - 160px)",
-              overflowY: "auto",
+              maxHeight: "calc(100vh - 260px)",
               marginTop: chat?.length > 0 ? 3 : 0,
-              overflowX: "hidden",
               maxWidth: "900px",
+              marginRight: { sm: 0, md: "5rem" },
             }}
           >
             {loadingList ? (
@@ -120,14 +117,14 @@ export default function ChatContent() {
                   sx={{
                     width: 32,
                     height: 32,
-                    bgcolor: "white",
+                    bgcolor: "#1e3c72",
                     fontSize: 14,
                     fontWeight: "bold",
                     marginRight: 2,
                   }}
                 >
                   <Image
-                    src={"/small_logo.png"}
+                    src={"/chat_icon.png"}
                     alt="logo"
                     width={26}
                     height={26}
@@ -182,10 +179,11 @@ export default function ChatContent() {
             component="form"
             elevation={0}
             sx={{
+              marginRight: { sm: 0, md: "5rem" },
               display: "flex",
               alignItems: "flex-end",
               width: "100%",
-              maxWidth: 800,
+              maxWidth: 900,
               px: 2,
               py: 1.5,
               borderRadius: 3,

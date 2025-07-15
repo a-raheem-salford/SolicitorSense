@@ -368,7 +368,10 @@ export default function Sidebar({
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 3 },
+          p: { xs: 3, sm: 2, md: 0 },
+          pt: { xs: 6, sm: 3, md: 3 },
+          pl: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 2, sm: 3, md: 4 },
           ml: { sm: `${drawerWidth}px` }, // Shift content right by sidebar width
           width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
           transition: "margin-left 0.3s ease, width 0.3s ease",

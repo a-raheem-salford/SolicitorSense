@@ -18,6 +18,8 @@ export function AuthProvider({ children }) {
     if (isBrowser) {
       const storedUser = localStorage.getItem("user") || null;
       const storedSessionId = localStorage.getItem("sessionId") || null;
+      console.log("storedSessionId", storedSessionId);
+
       if (storedUser) {
         setUser(JSON?.parse(storedUser));
       }
