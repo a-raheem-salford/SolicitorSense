@@ -24,16 +24,11 @@ const ChatItem = ({ user, msg, name = "" }) => {
         background: isAI ? "transparent" : "#f0eee6",
         padding: "12px 20px",
         borderRadius: "10px",
-        boxShadow: isAI ? 0 : "rgba(0, 0, 0, 0.04) 0px 3px 5px;",
-
+        boxShadow: isAI ? "none" : "rgba(0, 0, 0, 0.04) 0px 3px 5px",
         animation: "showIn 0.2s cubic-bezier(0.88, 0.19, 0.37, 1.11) both",
         "@keyframes showIn": {
-          "0%": {
-            transform: "scale(0)",
-          },
-          "100%": {
-            transform: "scale(1)",
-          },
+          "0%": { transform: "scale(0)" },
+          "100%": { transform: "scale(1)" },
         },
       }}
     >
@@ -43,28 +38,20 @@ const ChatItem = ({ user, msg, name = "" }) => {
           borderRadius: isAI ? "10px 10px 10px 0" : "10px 10px 0 10px",
           maxWidth: "100%",
           minWidth: "215px",
+          wordBreak: "break-word",
         }}
       >
         {!isAI && (
           <Typography
             variant="subtitle2"
             fontWeight={700}
-            sx={{ color: "#1e3c72" }}
+            sx={{ color: "#1e3c72", mb: 1 }}
           >
             {displayName}
           </Typography>
         )}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            wordBreak: "break-word",
-            marginTop: 1.5,
-            gap:2,
-            "& p": { margin: 0, padding: 0 },
-          }}
-        >
+
+        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
           {isAI && (
             <Avatar
               sx={{
@@ -79,7 +66,10 @@ const ChatItem = ({ user, msg, name = "" }) => {
               <Image src={"/chat_icon.png"} alt="logo" width={24} height={24} />
             </Avatar>
           )}
-          <Markdown>{msg}</Markdown>
+
+          <Box>
+            <Markdown>{msg}</Markdown>
+          </Box>
         </Box>
       </Box>
 
@@ -88,7 +78,7 @@ const ChatItem = ({ user, msg, name = "" }) => {
           sx={{
             width: 32,
             height: 32,
-            bgcolor: isAI ? "#ffffff" : "#1e3c72",
+            bgcolor: "#1e3c72",
             fontSize: 14,
             fontWeight: "bold",
             color: "#ffffff",

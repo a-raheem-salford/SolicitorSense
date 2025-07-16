@@ -147,7 +147,7 @@ export default function Sidebar({
 
       <>
         {isOpen || isMobile ? (
-          <Box sx={{ px: 2, py: 2 }}>
+          <Box sx={{ px: 2, py: 2, mt: 4 }}>
             <Button
               fullWidth
               variant="contained"
