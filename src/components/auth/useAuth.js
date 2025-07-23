@@ -68,7 +68,7 @@ export function useAuth() {
     try {
       setLoading(true);
       setErrors({});
-      const res = await HTTP_REQUEST.post("/api/auth/login", form);
+      const res = await HTTP_REQUEST.post("/auth/login", form);
       loginContext(res.data);
       console.log("Login Success", res.data);
     } catch (err) {
@@ -90,7 +90,7 @@ export function useAuth() {
     try {
       setLoading(true);
       setErrors({});
-      const res = await HTTP_REQUEST.post("/api/auth/signup", {
+      const res = await HTTP_REQUEST.post("/auth/signup", {
         name: form.name,
         email: form.email,
         password: form.password,

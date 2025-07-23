@@ -14,7 +14,7 @@ const GoogleAuth = () => {
           onSuccess={async (credentialResponse) => {
             try {
               const res = await HTTP_REQUEST.post(
-                "/api/auth/google-auth",
+                "/auth/google-auth",
                 credentialResponse
               );
               loginContext(res.data);

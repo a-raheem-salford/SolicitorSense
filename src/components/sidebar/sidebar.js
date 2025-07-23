@@ -240,7 +240,7 @@ export default function Sidebar({
                     },
                   }}
                 >
-                  {isOpen && (
+                  {(isOpen || isMobile) && (
                     <ListItemText
                       primary={chat.msg}
                       primaryTypographyProps={{
@@ -256,7 +256,7 @@ export default function Sidebar({
 
               return (
                 <ListItem key={chat.sessionId} disablePadding>
-                  {isOpen && item}
+                  {(isOpen || isMobile) && item}
                 </ListItem>
               );
             })

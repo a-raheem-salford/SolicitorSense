@@ -22,7 +22,7 @@ import { TypingIndicator } from "@/lib/helper";
 import Toaster from "../common/toast";
 import { Replay } from "@mui/icons-material";
 
-export default function ChatContent() {
+export default function ChatContent({ mobileOpen, setMobileOpen }) {
   const {
     chat,
     loading,
@@ -52,6 +52,8 @@ export default function ChatContent() {
       sessionId={sessionId}
       fetchDataForSession={fetchDataForSession}
       initiateNewChat={initiateNewChat}
+      mobileOpen={mobileOpen}
+      setMobileOpen={setMobileOpen}
     >
       <Box
         sx={{
