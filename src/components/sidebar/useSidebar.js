@@ -11,7 +11,6 @@ const useSidebar = ({ sessionId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log({ sessionId, user });
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openAvatar = Boolean(anchorEl);
@@ -27,7 +26,6 @@ const useSidebar = ({ sessionId }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("inside useeffect");
 
       setLoading(true);
       try {

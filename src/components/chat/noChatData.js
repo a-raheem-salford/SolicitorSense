@@ -75,16 +75,31 @@ const NoChatData = ({ onMsgSend, setMsg }) => {
         {`Good ${timeOfDay}, ${user?.name || ""}`}
       </Typography>
 
+      {/* MODIFIED: Updated description to include document support */}
       <Typography
         variant="body2"
         sx={{
           color: "#5e6278",
           fontWeight: 500,
-          mb: 3,
+          mb: 1,
           textAlign: "center",
         }}
       >
-        You can ask me anything related to UK law
+        You can ask me anything related to UK law or upload legal documents for analysis
+      </Typography>
+
+      {/* NEW: Document upload hint */}
+      <Typography
+        variant="caption"
+        sx={{
+          color: "#9ca3af",
+          fontWeight: 400,
+          mb: 3,
+          textAlign: "center",
+          fontStyle: "italic",
+        }}
+      >
+        📎 Supported formats: PDF, DOC, DOCX, TXT
       </Typography>
 
       <Box

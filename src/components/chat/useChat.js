@@ -20,18 +20,29 @@ const useChat = () => {
     message: "",
   });
 
+  // NEW: Document upload states
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(false);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      msg.trim() && onMsgSend();
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      if (msg.trim() || selectedFiles.length > 0) {
+        onMsgSend();
+      }
     }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    const timeout = setTimeout(() => {
+      scrollToBottom();
+    }, 100); // small delay
+
+    return () => clearTimeout(timeout);
   }, [chat]);
 
   useEffect(() => {
@@ -43,41 +54,89 @@ const useChat = () => {
     setMsg(e.target.value);
   };
 
-  const onMsgSend = async (message, reloadMessage = false) => {
-    if (msg !== "" || message !== "") {
-      const msgChat = [
-        ...chat,
-        {
-          _id: chat.length + 1,
-          type: "Human",
-          msg: message || msg,
-        },
-      ];
-      !reloadMessage && setChat(msgChat);
-      setLoading(true);
+  // NEW: File handling functions
+  const handleFileSelect = (files) => {
+    const validFiles = Array.from(files).filter((file) => {
+      const extension = file.name.toLowerCase().split(".").pop();
+      return ["pdf", "doc", "docx", "txt"].includes(extension);
+    });
 
-      const obj = {
-        msg: message || msg,
-        ...(sessionId && { sessionId }),
+    if (validFiles.length !== files.length) {
+      setToast({
+        open: true,
+        message:
+          "Some files were rejected. Only PDF, DOC, DOCX, and TXT files are allowed.",
+        severity: "warning",
+      });
+    }
+
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // MODIFIED: Enhanced onMsgSend with database schema matching
+  const onMsgSend = async (message, reloadMessage = false) => {
+    if (msg !== "" || message !== "" || selectedFiles.length > 0) {
+      const msgText = message || msg;
+
+      // Create message object matching database schema
+      const messageWithDocs = {
+        _id: Date.now(), // Temporary ID
         type: "Human",
-        chat: chat,
+        msg:
+          msgText ||
+          `Analyze the uploaded document${selectedFiles.length > 1 ? "s" : ""}`,
+        hasDocuments: selectedFiles.length > 0,
+        documentNames: selectedFiles.map((f) => f.name),
+        documentCount: selectedFiles.length,
+        documentResults: selectedFiles.map((f) => ({
+          filename: f.name,
+          processed: null, // Will be updated from response
+          irrelevant: null,
+          documentType: null,
+          error: null,
+        })),
+        irrelevantCount: 0,
+        processedCount: 0,
+        createdAt: new Date().toISOString(),
       };
 
-      try {
-        const response = await HTTP_REQUEST.post(`/chat`, obj);
+      const finalChat = [...chat, messageWithDocs];
+      !reloadMessage && setChat(finalChat);
+      setLoading(true);
+      setUploadProgress(selectedFiles.length > 0);
 
-        const newChat = [
-          ...msgChat,
-          {
-            _id: msgChat.length + 1,
-            type: "AI",
-            msg: response.data.msg,
+      // Create FormData for file upload
+      const formData = new FormData();
+      if (msgText) formData.append("msg", msgText);
+      if (sessionId) formData.append("sessionId", sessionId);
+
+      selectedFiles.forEach((file) => {
+        formData.append("documents", file);
+      });
+
+      try {
+        const response = await HTTP_REQUEST.post(`/chat`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
+        });
+
+        // *** USE DATABASE SCHEMA OBJECTS DIRECTLY ***
+        const newChat = [
+          ...chat,
+          response.data.userMessage, // Direct database object
+          response.data.aiMessage, // Direct database object
         ];
 
         if (!sessionId) setSessionId(response.data.sessionId);
         setChat(newChat);
+        scrollToBottom();
         setMsg("");
+        setSelectedFiles([]);
         setReload(false);
       } catch (error) {
         setReload(true);
@@ -92,6 +151,7 @@ const useChat = () => {
         }
       } finally {
         setLoading(false);
+        setUploadProgress(false);
       }
     }
   };
@@ -115,6 +175,7 @@ const useChat = () => {
         setToast({ open: true, message: error.message, severity: "error" });
       }
     } finally {
+      scrollToBottom();
       setLoadingList(false);
       setLoading(false);
     }
@@ -124,14 +185,12 @@ const useChat = () => {
     removeSessionId();
     setChat([]);
     setMsg("");
+    setSelectedFiles([]); // NEW: Clear files on new chat
     setLoading(false);
     setReload(false);
   };
 
   const handleReloadChat = () => {
-    console.log("inside reload handler", msg);
-
-    // setReload(false);
     onMsgSend(msg, true);
   };
 
@@ -151,7 +210,11 @@ const useChat = () => {
     reload,
     handleReloadChat,
     setMsg,
-    sessionId
+    sessionId,
+    selectedFiles,
+    handleFileSelect,
+    removeFile,
+    uploadProgress,
   };
 };
 

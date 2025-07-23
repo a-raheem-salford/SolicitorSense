@@ -10,7 +10,7 @@ export default function Toaster({ toast, setToast }) {
   return (
     <Snackbar
       open={toast.open}
-      autoHideDuration={4000}
+      autoHideDuration={15000}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >

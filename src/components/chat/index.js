@@ -9,8 +9,10 @@ import {
   Avatar,
   CircularProgress,
   Button,
+  Chip,
+  Tooltip,
 } from "@mui/material";
-import { AttachFile, Send } from "@mui/icons-material";
+import { AttachFile, Send, Close } from "@mui/icons-material";
 import useChat from "./useChat";
 import ChatItem from "./chatItem";
 import NoChatData from "./noChatData";
@@ -38,6 +40,11 @@ export default function ChatContent() {
     setMsg,
     reload,
     handleReloadChat,
+    // NEW: Document upload props
+    selectedFiles,
+    handleFileSelect,
+    removeFile,
+    uploadProgress,
   } = useChat();
 
   return (
@@ -93,6 +100,10 @@ export default function ChatContent() {
                   user={itm.type}
                   msg={itm.msg}
                   image={itm.image}
+                  hasDocuments={itm.hasDocuments || false}
+                  documentNames={itm.documentNames || []}
+                  documentCount={itm.documentCount || 0}
+                  documentResults={itm.documentResults || []}
                 />
               ))
             ) : (
@@ -130,13 +141,15 @@ export default function ChatContent() {
                     height={26}
                   />
                 </Avatar>
-                {loading ? (
-                  <TypingIndicator
-                    background={"transparent"}
-                    width={10}
-                    height={10}
-                    boxShadow="none"
-                  />
+                {loading || uploadProgress ? (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <TypingIndicator
+                      background={"transparent"}
+                      width={10}
+                      height={10}
+                      boxShadow="none"
+                    />
+                  </Box>
                 ) : (
                   <Box>
                     <Button
@@ -206,61 +219,133 @@ export default function ChatContent() {
               onMsgSend();
             }}
           >
-            <InputBase
-              placeholder="How can I help you today ?"
-              fullWidth
-              multiline
-              minRows={3}
-              maxRows={4}
-              onChange={onStateChange}
-              value={msg}
-              onKeyDown={handleKeyPress}
-              disabled={loading}
-              sx={{
-                flex: 1,
-                mx: 1,
-                color: "text.primary",
-                fontSize: "16px",
-                lineHeight: 1.5,
-                "& .MuiInputBase-input": {
-                  padding: "8px 0",
-                  "&::placeholder": {
-                    color: "text.secondary",
-                    opacity: 0.7,
-                  },
-                },
-              }}
-            />
+            {/* Input and Files Container */}
+            <Box sx={{ flex: 1, mx: 1 }}>
+              {/* File Preview Inside Input */}
+              {selectedFiles.length > 0 && (
+                <Box
+                  sx={{ mb: 1, display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                >
+                  {selectedFiles.map((file, index) => (
+                    <Chip
+                      key={index}
+                      label={`📄 ${file.name}`}
+                      variant="filled"
+                      size="small"
+                      onDelete={() => removeFile(index)}
+                      deleteIcon={<Close />}
+                      sx={{
+                        maxWidth: "180px",
+                        height: "24px",
+                        backgroundColor: "#f3f4f6",
+                        color: "#374151",
+                        fontSize: "11px",
+                        "& .MuiChip-label": {
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          paddingLeft: "6px",
+                          paddingRight: "4px",
+                        },
+                        "& .MuiChip-deleteIcon": {
+                          fontSize: "14px",
+                          color: "#6b7280",
+                          "&:hover": {
+                            color: "#374151",
+                          },
+                        },
+                      }}
+                    />
+                  ))}
+                </Box>
+              )}
 
+              {/* Text Input */}
+              <InputBase
+                placeholder={
+                  selectedFiles.length > 0
+                    ? "Ask about your documents or add more context..."
+                    : "How can I help you today?"
+                }
+                fullWidth
+                multiline
+                minRows={selectedFiles.length > 0 ? 2 : 3}
+                maxRows={4}
+                onChange={onStateChange}
+                value={msg}
+                onKeyDown={handleKeyPress}
+                disabled={loading}
+                sx={{
+                  color: "text.primary",
+                  fontSize: "16px",
+                  lineHeight: 1.5,
+                  "& .MuiInputBase-input": {
+                    padding: "8px 0",
+                    "&::placeholder": {
+                      color: "text.secondary",
+                      opacity: 0.7,
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            {/* File Upload Button */}
             <Box
               sx={{ display: "flex", alignItems: "flex-end", gap: 0.5, mr: 1 }}
             >
-              <IconButton
-                size="small"
-                sx={{
-                  color: "text.secondary",
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                }}
-              >
-                <AttachFile size={20} />
-              </IconButton>
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.txt"
+                style={{ display: "none" }}
+                id="file-upload"
+                onChange={(e) => handleFileSelect(e.target.files)}
+              />
+              <label htmlFor="file-upload">
+                <Tooltip title="Upload documents (PDF, DOC, DOCX, TXT)">
+                  <IconButton
+                    component="span"
+                    size="small"
+                    sx={{
+                      color:
+                        selectedFiles.length > 0 ? "#1e3c72" : "text.secondary",
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                      },
+                    }}
+                  >
+                    <AttachFile size={20} />
+                  </IconButton>
+                </Tooltip>
+              </label>
             </Box>
 
+            {/* Send Button - same as before */}
             <IconButton
               type="submit"
-              disabled={loading || !msg.trim()}
+              disabled={loading || (!msg.trim() && selectedFiles.length === 0)}
               sx={{
-                backgroundColor: msg.trim() ? "#1e3c72" : "action.disabled",
-                color: msg.trim() ? "#fff" : "text.disabled",
+                backgroundColor:
+                  msg.trim() || selectedFiles.length > 0
+                    ? "#1e3c72"
+                    : "action.disabled",
+                color:
+                  msg.trim() || selectedFiles.length > 0
+                    ? "#fff"
+                    : "text.disabled",
                 width: 36,
                 height: 36,
                 borderRadius: 2,
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
-                  backgroundColor: msg.trim() ? "#d14a20" : "action.disabled",
-                  transform: msg.trim() ? "scale(1.05)" : "none",
+                  backgroundColor:
+                    msg.trim() || selectedFiles.length > 0
+                      ? "#d14a20"
+                      : "action.disabled",
+                  transform:
+                    msg.trim() || selectedFiles.length > 0
+                      ? "scale(1.05)"
+                      : "none",
                 },
                 "&:disabled": {
                   backgroundColor: "action.disabled",
